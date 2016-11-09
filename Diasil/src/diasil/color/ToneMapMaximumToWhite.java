@@ -1,33 +1,30 @@
 package diasil.color;
 
-public class ToneMapMaximumToWhite implements ToneMapper
+public class ToneMapMaximumToWhite extends ToneMapper
 {
-    public float scale;
-    public ToneMapMaximumToWhite(float s)
+    public ToneMapMaximumToWhite(float display_luminance)
+	{
+		super(display_luminance);
+	}
+    public float[][] toneMap(XYZImage img)
     {
-        scale = s;
-    }
-    public DImage<XYZColor> toneMap(DImage<XYZColor> img)
-    {
-        DImage<XYZColor> r = new DImage<XYZColor>(img.width(), img.height());
+        float[][] r = new float[img.width()][img.height()];
         float max = Float.NEGATIVE_INFINITY;
-        for (int i=0; i<r.width(); ++i)
+        for (int i=0; i<img.width(); ++i)
         {
-            for (int j=0; j<r.height(); ++j)
+            for (int j=0; j<img.height(); ++j)
             {
-                max = Math.max(max, img.get(i, j).Y);
+                max = Math.max(max, img.X[i][j].Y);
             }
         }
-        max *= scale;
-        float inv_max = 1.0f/max;
-        for (int i=0; i<r.width(); ++i)
+        float scale = display_luminance/max;
+        for (int i=0; i<img.width(); ++i)
         {
-            for (int j=0; j<r.height(); ++j)
+            for (int j=0; j<img.height(); ++j)
             {
-                r.set(i, j, img.get(i, j).multiply(inv_max));
+                r[i][j] = scale;
             }
         }
-        
         return r;
     }
 

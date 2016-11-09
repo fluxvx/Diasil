@@ -143,6 +143,33 @@ public class Box3
         Vector3 d = new Vector3(Pmin, Pmax);
         return 2.0f*(d.X*d.Y + d.X*d.Z + d.Y*d.Z);
     }
+	
+	public Box3[] splitX(float a)
+	{
+		Box3 left = clone();
+		Box3 right = clone();
+		left.Pmax.X = right.Pmin.X = a;
+		return new Box3[]{left, right};
+	}
+	public Box3[] splitY(float a)
+	{
+		Box3 left = clone();
+		Box3 right = clone();
+		left.Pmax.Y = right.Pmin.Y = a;
+		return new Box3[]{left, right};
+	}
+	public Box3[] splitZ(float a)
+	{
+		Box3 left = clone();
+		Box3 right = clone();
+		left.Pmax.Z = right.Pmin.Z = a;
+		return new Box3[]{left, right};
+	}
+	
+	public Box3 clone()
+	{
+		return new Box3(Pmin, Pmax);
+	}
     
 }
 

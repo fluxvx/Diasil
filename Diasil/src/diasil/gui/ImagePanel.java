@@ -1,7 +1,7 @@
 package diasil.gui;
 
-import diasil.color.DImage;
 import diasil.color.RGBColor;
+import diasil.color.RGBImage;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -15,14 +15,14 @@ public class ImagePanel extends JPanel
         image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     }
 
-    public void setImage(DImage<RGBColor> img)
+    public void setImage(RGBImage img)
     {
         image = new BufferedImage(img.width(), img.height(), BufferedImage.TYPE_INT_RGB);
         for (int i=0; i<img.width(); ++i)
         {
             for (int j=0; j<img.height(); ++j)
             {
-                RGBColor cc = new RGBColor(img.get(i, j));
+                RGBColor cc = new RGBColor(img.X[i][j]);
                 cc.clamp();
                 
                 int r = (int)(cc.R*255);

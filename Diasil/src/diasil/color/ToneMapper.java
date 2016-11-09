@@ -1,6 +1,11 @@
 package diasil.color;
 
-public interface ToneMapper
+public abstract class ToneMapper
 {
-    public DImage<XYZColor> toneMap(DImage<XYZColor> img);
+	public final float display_luminance;
+	public ToneMapper(float display_luminance)
+	{
+		this.display_luminance = display_luminance;
+	}
+    public abstract float[][] toneMap(XYZImage img);
 }

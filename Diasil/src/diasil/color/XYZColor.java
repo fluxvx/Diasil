@@ -42,7 +42,8 @@ public class XYZColor
         Z /= max;
     }
     
-    public static XYZColor findForWavelength(float wl, float s)
+	// http://jcgt.org/published/0002/02/01/
+    public static XYZColor findForWavelength(float wl)
     {
 		float x1 = (wl-442.0f)*((wl < 442.0f)?0.0624f:0.0374f);
 		float x2 = (wl-599.8f)*((wl < 599.8f)?0.0264f:0.0323f);
@@ -57,6 +58,6 @@ public class XYZColor
 		float z2 = (wl-459.0f)*((wl < 459.0f)?0.0385f:0.0725f);
 		float z = 1.217f*(float)Math.exp(-0.5f*z1*z1) + 0.681f*(float)Math.exp(-0.5f*z2*z2);
         
-        return new XYZColor(s*x, s*y, s*z);
+        return new XYZColor(x, y, z);
     }
 }

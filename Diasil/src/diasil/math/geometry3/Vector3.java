@@ -52,6 +52,12 @@ public class Vector3
 		Y = -Y;
 		Z = -Z;
 	}
+	public void multiplyBy(float a)
+	{
+		X *= a;
+		Y *= a;
+		Z *= a;
+	}
 	public float dot(Vector3 v)
 	{
 		return X*v.X + Y*v.Y + Z*v.Z;

@@ -13,6 +13,15 @@ public class DMath
     private static Random random;
     
     private DMath() {}
+	
+	
+	
+	
+	public static float sqrt(float v)
+	{
+		return (float)Math.sqrt(v);
+	}
+	
     
     
     public static float acos(float cos_theta)
@@ -70,11 +79,6 @@ public class DMath
         return (float)(Math.exp(a));
     }
     
-    public static float sqrt(float a)
-    {
-        return (float)(Math.sqrt(a));
-    }
-    
     public static float cos(float angle)
     {
         return (float)(Math.cos(angle));
@@ -102,6 +106,10 @@ public class DMath
     {
         return (x < 0.0f)? 0.0f: (x > 1.0f)? 1.0f: x;
     }
+	public static float clamp(float x, float min, float max)
+	{
+		return (x < min)? min: (x > max)? max: x;
+	}
     
     public static int clamp(int x, int a, int b)
     {

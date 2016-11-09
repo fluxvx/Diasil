@@ -3,6 +3,8 @@ package diasil.color;
 public abstract class SPD
 {
     public abstract float evaluate(float wavelength);
+	
+	
     
     
     public static SPD constant(final float v)

@@ -1,5 +1,7 @@
 package diasil.math.geometry3;
 
+import diasil.intersect.SurfaceGeometry;
+
 public abstract class Transform3
 {
 	public abstract Point3 toWorldSpace(Point3 p);

@@ -5,8 +5,9 @@ import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Ray3;
 import java.util.ArrayList;
 
-// an aggregate holds a collection of entities that can be transformed together
-// an aggregate can contain other aggregates
+// holds a collection of shapes that can be transformed together
+// can employ techniques for accelerating intersections
+// can contain other aggregates
 public class Aggregate extends Shape
 {
     public Box3 bounding_box;

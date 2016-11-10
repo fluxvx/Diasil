@@ -33,6 +33,7 @@ public class Sample
 	
 	
 	
+	
 	public static Point3 UniformSampleSphere(float u1, float u2)
 	{
 		float z = 1.0f - 2.0f*u1;

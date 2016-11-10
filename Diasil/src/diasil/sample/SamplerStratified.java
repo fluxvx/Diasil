@@ -3,6 +3,7 @@ package diasil.sample;
 import diasil.DUtility;
 import diasil.math.DMath;
 import diasil.math.geometry2.Point2;
+import java.util.SplittableRandom;
 
 public class SamplerStratified extends Sampler
 {
@@ -20,8 +21,9 @@ public class SamplerStratified extends Sampler
 	private float[] lens_sb;
 	private float[] wavelength_sb;
 	
-	public SamplerStratified(int n_samples, float jitter, Filter filter)
+	public SamplerStratified(int n_samples, float jitter, Filter filter, SplittableRandom random)
 	{
+		super(random);
 		sqrt_ns = (int)Math.round(Math.sqrt(n_samples));
 		n_samples = sqrt_ns*sqrt_ns;
 		samples = new Sample[n_samples];
@@ -72,9 +74,9 @@ public class SamplerStratified extends Sampler
 			s.Y = img_j + pixel_sb[i2+1];
 			super.rasterToScreen(s, img_width, img_height);
 			
-			s.U = lens_sb[i2];
-			s.V = lens_sb[i2+1];
-			s.wavelength = wavelength_sb[i];
+			s.U = 2.0f*lens_sb[i2]-1.0f;
+			s.V = 2.0f*lens_sb[i2+1]-1.0f;
+			s.wavelength = DMath.interpolate(WAVELENGTH_MIN, WAVELENGTH_MAX, wavelength_sb[i]);
 			filter.weight(s);
 			
 			for (int j=0, sid=0; j<nSamples1D.length; ++j)
@@ -98,44 +100,44 @@ public class SamplerStratified extends Sampler
 	
 	public Sampler clone()
 	{
-		return new SamplerStratified(samples.length, jitter, filter.clone());
+		return new SamplerStratified(samples.length, jitter, filter.clone(), random.split());
 	}
     
 	
 	
 	
-	private static void Stratified1D(float[] r, int min, int ns, float jitter)
+	private void Stratified1D(float[] r, int min, int ns, float jitter)
 	{
 		float scale = 1.0f/ns;
 		float offset = 0.5f*scale;
 		for (int i=0; i<ns; ++i)
 		{
-			r[min+i] = offset + i*scale + (DMath.random()-0.5f)*scale*jitter;
+			r[min+i] = offset + i*scale + (nextFloat()-0.5f)*scale*jitter;
 		}
 	}
-	private static void Stratified2D(float[] r, int min, int sqrt_ns, float jitter)
+	private void Stratified2D(float[] r, int min, int sqrt_ns, float jitter)
 	{
 		float scale = 1.0f/sqrt_ns;
 		float offset = 0.5f*scale;
 		for (int i=0, k=0; i<sqrt_ns; ++i)
 		{
-			float x = offset + i*scale + (DMath.random()-0.5f)*scale*jitter;
+			float x = offset + i*scale + (nextFloat()-0.5f)*scale*jitter;
 			for (int j=0; j<sqrt_ns; ++j, ++k)
 			{
-				float y = offset + j*scale + (DMath.random()-0.5f)*scale*jitter;
+				float y = offset + j*scale + (nextFloat()-0.5f)*scale*jitter;
 				r[min + (k<<1)] = x;
 				r[min + (k<<1)+1] = y;
 			}
 		}
 	}
-	public static void LatinHypercube(float[] f, int min, int ns, int nd)
+	public void LatinHypercube(float[] f, int min, int ns, int nd)
 	{
 		float scale = 1.0f/ns;
 		for (int i=0; i<ns; ++i)
 		{
 			for (int j=0; j<nd; ++j)
 			{
-				f[nd*i + j] = (i + DMath.random())*scale;
+				f[nd*i + j] = (i + nextFloat())*scale;
 			}
 		}
 
@@ -143,7 +145,7 @@ public class SamplerStratified extends Sampler
 		{
 			for (int j=0; j<ns; ++j)
 			{
-				int oj = j + DMath.randomInt(ns - j);
+				int oj = j + random.nextInt(ns - j);
 				Swap(f, nd*j + i, nd*oj + i);
 			}
 		}

@@ -8,6 +8,8 @@ import diasil.math.geometry3.Normal3;
 import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Ray3;
 import diasil.math.geometry3.Vector3;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Cube extends Shape
 {
@@ -109,8 +111,9 @@ public class Cube extends Shape
 	
 	public Point3 sampleSurface(float u1, float u2)
 	{
-		int d = (int)(DMath.random()*3);
-		float v = (DMath.random() < 0.5f)? -radius: radius;
+		Random random = ThreadLocalRandom.current();
+		int d = random.nextInt(3);
+		float v = (random.nextInt()%2 == 0)? -radius: radius;
 		u1 = (2.0f*u1 - 1.0f)*radius;
 		u2 = (2.0f*u2 - 1.0f)*radius;
 		

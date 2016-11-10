@@ -2,7 +2,7 @@ package diasil;
 
 import diasil.color.RGBColor;
 import diasil.color.RGBImage;
-import diasil.color.RawImage;
+import diasil.color.RawFilm;
 import diasil.color.RawSample;
 import diasil.gui.ImagePanel;
 import diasil.sample.Sample;
@@ -25,13 +25,13 @@ import javax.swing.JFrame;
 public class ImageManager
 {
 	
-	public void saveRawRender(RawImage img)
+	public void saveRawRender(RawFilm img)
 	{
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 		saveRawRender("render" + format.format(date), img);
 	}
-	public void saveRawRender(String name, RawImage img)
+	public void saveRawRender(String name, RawFilm img)
 	{
 		try
 		{
@@ -59,7 +59,7 @@ public class ImageManager
 			ex.printStackTrace();
 		}
 	}
-	public RawImage readRawRender(String path)
+	public RawFilm readRawRender(String path)
 	{
 		try
 		{
@@ -68,7 +68,7 @@ public class ImageManager
 			int width = Integer.parseInt(info[0]);
 			int height = Integer.parseInt(info[1]);
 			int spp = Integer.parseInt(info[2]);
-			RawImage img = new RawImage(width, height, spp);
+			RawFilm img = new RawFilm(width, height, spp);
 			for (int i=0; i<width; ++i)
 			{
 				for (int j=0; j<height; ++j)

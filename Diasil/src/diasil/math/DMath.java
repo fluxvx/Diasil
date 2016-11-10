@@ -40,35 +40,6 @@ public class DMath
         return (float)(Math.log(v));
     }
     
-    public static long seedRNG()
-    {
-        long seed = System.currentTimeMillis();
-        seedRNG(seed);
-        return seed;
-    }
-    
-    public static void seedRNG(long seed)
-    {
-        random = new Random(seed);
-    }
-    public static float random()
-    {
-        return random.nextFloat();
-    }
-    public static float random(float max)
-    {
-        return random.nextFloat()*max;
-    }
-    public static float random(float min, float max)
-    {
-        return interpolate(min, max, random());
-    }
-    public static int randomInt(int max)
-    {
-        return random.nextInt(max);
-    }
-    
-    
     public static float pow(float a, float b)
     {
         return (float)(Math.pow(a, b));

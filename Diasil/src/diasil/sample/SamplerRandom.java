@@ -1,6 +1,7 @@
 package diasil.sample;
 
 import diasil.math.DMath;
+import java.util.SplittableRandom;
 
 public class SamplerRandom extends Sampler
 {
@@ -8,8 +9,9 @@ public class SamplerRandom extends Sampler
 	private int[] nSamples1D, nSamples2D;
 	private Filter filter;
 	
-	public SamplerRandom(int n_samples, Filter filter)
+	public SamplerRandom(int n_samples, Filter filter, SplittableRandom random)
 	{
+		super(random);
 		samples = new Sample[n_samples];
 		this.filter = filter;
 	}
@@ -39,20 +41,20 @@ public class SamplerRandom extends Sampler
 		{
 			Sample s = samples[i];
 			
-			s.X = img_i + DMath.random();
-			s.Y = img_j + DMath.random();
+			s.X = img_i + nextFloat();
+			s.Y = img_j + nextFloat();
 			super.rasterToScreen(s, img_width, img_height);
 			
-			s.U = 2.0f*DMath.random()-1.0f;
-			s.V = 2.0f*DMath.random()-1.0f;
-			s.wavelength = DMath.interpolate(WAVELENGTH_MIN, WAVELENGTH_MAX, DMath.random());
+			s.U = 2.0f*nextFloat()-1.0f;
+			s.V = 2.0f*nextFloat()-1.0f;
+			s.wavelength = DMath.interpolate(WAVELENGTH_MIN, WAVELENGTH_MAX, nextFloat());
 			for (int j=0; j<s.samples1D.length; ++j)
 			{
-				s.samples1D[j] = DMath.random();
+				s.samples1D[j] = nextFloat();
 			}
 			for (int j=0; j<s.samples2D.length; ++i)
 			{
-				s.samples2D[j] = DMath.random();
+				s.samples2D[j] = nextFloat();
 			}
 			filter.weight(s);
 		}
@@ -64,7 +66,7 @@ public class SamplerRandom extends Sampler
 	}
 	public Sampler clone()
 	{
-		return new SamplerRandom(samples.length, filter.clone());
+		return new SamplerRandom(samples.length, filter.clone(), random.split());
 	}
 }
 

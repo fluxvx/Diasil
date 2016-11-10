@@ -4,56 +4,47 @@ import diasil.sample.Sample;
 
 public class SimpleFilm implements Film
 {
-	private RawImage render;
-    public SimpleFilm(int w, int h, int samples_per_pixel)
+	private XYZImage render;
+    public SimpleFilm(int w, int h)
     {
-		render = new RawImage(w, h, samples_per_pixel);
+		render = new XYZImage(w, h);
+		for (int i=0; i<render.width(); ++i)
+		{
+			for (int j=0; j<render.height(); ++j)
+			{
+				render.X[i][j] = new XYZColor(0.0f, 0.0f, 0.0f);
+			}
+		}
     }
     
     public int width()
     {
-        return render.width;
+        return render.width();
     }
     public int height()
     {
-        return render.height;
+        return render.height();
     }
 	
     public void recordContribution(int i, int j, int k, Sample s)
     {
-		render.X[i][j][k] = new RawSample(s.X, s.Y, s.wavelength, s.intensity);
+		XYZColor c = render.X[i][j];
+		XYZColor cmf = XYZColor.findForWavelength(s.wavelength);
+		c.X += s.intensity*cmf.X;
+		c.Y += s.intensity*cmf.Y;
+		c.Z += s.intensity*cmf.Z;
+		
     }
-	
-	public XYZImage toXYZ()
-	{
-		XYZImage r = new XYZImage(render.width, render.height);
-		for (int i=0; i<render.width; ++i)
-		{
-			for (int j=0; j<render.height; ++j)
-			{
-				r.X[i][j] = new XYZColor(0.0f);
-				for (int k=0; k<render.samples_per_pixel; ++k)
-				{
-					RawSample s = render.X[i][j][k];
-					XYZColor c = XYZColor.findForWavelength(s.wavelength);
-					r.X[i][j].X += s.intensity * c.X;
-					r.X[i][j].Y += s.intensity * c.Y;
-					r.X[i][j].Z += s.intensity * c.Z;
-				}
-			}
-		}
-		return r;
-	}
     
-    public RGBImage toRGB(XYZImage image, XYZtoRGB xyz_to_rgb, ToneMapper tone_mapper)
+    public RGBImage toRGB(XYZtoRGB xyz_to_rgb, ToneMapper tone_mapper)
     {	
-		float[][] tone_map_weights = tone_mapper.toneMap(image);
-        RGBImage r = new RGBImage(image.width(), image.height());
+		float[][] tone_map_weights = tone_mapper.toneMap(render);
+        RGBImage r = new RGBImage(render.width(), render.height());
         for (int i=0; i<r.width(); ++i)
         {
             for (int j=0; j<r.height(); ++j)
             {
-				RGBColor c = xyz_to_rgb.toRGB(image.X[i][j]);
+				RGBColor c = xyz_to_rgb.toRGB(render.X[i][j]);
 				
 				c.R *= tone_map_weights[i][j];
 				c.G *= tone_map_weights[i][j];

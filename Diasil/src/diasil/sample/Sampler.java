@@ -1,12 +1,22 @@
 package diasil.sample;
 
 import diasil.math.DMath;
+import java.util.SplittableRandom;
 
 public abstract class Sampler
 {
     protected static final float WAVELENGTH_MIN = 390.0f, WAVELENGTH_MAX = 700.0f;
+	protected SplittableRandom random;
 	
-	public Sampler() {}
+	public Sampler(SplittableRandom random)
+	{
+		this.random = random;
+	}
+	
+	protected float nextFloat()
+	{
+		return (float)(random.nextDouble());
+	}
 	
 	public abstract void allocateSamples(SampleCollector sg);
 	public abstract Sample[] regenerateSamples(int img_i, int img_j, int img_width, int img_height);
@@ -56,12 +66,12 @@ public abstract class Sampler
 	}
 	
 	
-	public static void Shuffle(float[] f, int min, int ns, int nd)
+	public void Shuffle(float[] f, int min, int ns, int nd)
 	{
 		for (int i=0; i<ns; ++i)
 		{
 			int ia = min + i*nd;
-			int ib = min + DMath.randomInt(ns)*nd;
+			int ib = min + random.nextInt(ns)*nd;
 			for (int j=0; j<nd; ++j)
 			{
 				float t = f[ia+j];
@@ -72,22 +82,22 @@ public abstract class Sampler
 	}
 	
 	
-	public static void Shuffle1D(float[] f)
+	public void Shuffle1D(float[] f)
     {
         for (int i=0; i<f.length; ++i)
         {
-            int ip = DMath.randomInt(f.length);
+            int ip = random.nextInt(f.length);
             float t = f[i];
             f[i] = f[ip];
             f[ip] = t;
         }
     }
-	public static void Shuffle2D(float[] f, int ns)
+	public void Shuffle2D(float[] f, int ns)
 	{
 		for (int i=0; i<ns; ++i)
 		{
 			int ia = i << 1;
-			int ib = DMath.randomInt(ns) << 1;
+			int ib = random.nextInt(ns) << 1;
 			
 			float tx = f[ia];
 			f[ia] = f[ib];

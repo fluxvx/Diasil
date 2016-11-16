@@ -14,26 +14,11 @@ public class ImagePanel extends JPanel
     {
         image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     }
-
-    public void setImage(RGBImage img)
-    {
-        image = new BufferedImage(img.width(), img.height(), BufferedImage.TYPE_INT_RGB);
-        for (int i=0; i<img.width(); ++i)
-        {
-            for (int j=0; j<img.height(); ++j)
-            {
-                RGBColor cc = new RGBColor(img.X[i][j]);
-                cc.clamp();
-                
-                int r = (int)(cc.R*255);
-                int g = (int)(cc.G*255);
-                int b = (int)(cc.B*255);
-                
-                Color color = new Color(r, g, b);
-                image.setRGB(i, j, color.getRGB());
-            }
-        }
-    }
+	
+	public void setImage(BufferedImage img)
+	{
+		image = img;
+	}
     
     public void paint(Graphics g)
     {

@@ -30,10 +30,9 @@ public class SimpleFilm implements Film
     {
 		XYZColor c = render.X[i][j];
 		XYZColor cmf = XYZColor.findForWavelength(s.wavelength);
-		c.X += s.intensity*cmf.X;
-		c.Y += s.intensity*cmf.Y;
-		c.Z += s.intensity*cmf.Z;
-		
+		c.X += s.L*cmf.X;
+		c.Y += s.L*cmf.Y;
+		c.Z += s.L*cmf.Z;
     }
     
     public RGBImage toRGB(XYZtoRGB xyz_to_rgb, ToneMapper tone_mapper)

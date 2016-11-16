@@ -48,7 +48,7 @@ public class SamplerStratified extends Sampler
 		for (int i=0; i<nSamples2D.length; ++i)
 		{
 			sqrtnSamples2D[i] = (int)(Math.round(Math.sqrt(nSamples2D[i])));
-			n2D += nSamples2D[i]<<1;
+			n2D += nSamples2D[i];
 		}
 		
 		for (int i=0; i<samples.length; ++i)

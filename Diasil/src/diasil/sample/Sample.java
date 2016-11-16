@@ -11,27 +11,13 @@ public class Sample
 	public float U, V; // lens sample
 	public float wavelength;
 	public float filter_weight;
-	public float intensity;
+	public float L;
 	public float[] samples1D, samples2D;
 	public Sample(int n1D, int n2D)
 	{
 		samples1D = new float[n1D];
-		samples2D = new float[n2D];
+		samples2D = new float[n2D*2];
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	public static Point3 UniformSampleSphere(float u1, float u2)

@@ -4,6 +4,7 @@ import diasil.material.LightRay;
 import diasil.material.Material;
 import diasil.math.DMath;
 import diasil.math.geometry3.Box3;
+import diasil.math.geometry3.CoordinateSpace3;
 import diasil.math.geometry3.Normal3;
 import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Ray3;
@@ -11,19 +12,17 @@ import diasil.math.geometry3.Vector3;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Cube extends Shape
+public class Cube extends CoordinateSpace3 implements Intersectable
 {
-    
-    public float radius;
-    public Cube(float r, Material m)
+    private float radius;
+	private Material material;
+    public Cube(float radius, Material material)
     {
-        super(m);
-        radius = r;
+		this.radius = radius;
+		this.material = material;
     }
-    
-    public SurfaceGeometry getSurfaceGeometry(Intersection it)
+    public SurfaceGeometry getSurfaceGeometry(Point3 p)
     {
-		Point3 p = it.Pobject;
 		// really lazy UV mapping - have the texture repeated on each face
 		float inv_len = 1.0f/(2*radius);
 		Point3 ps = new Point3((radius + p.X)*inv_len,
@@ -62,9 +61,8 @@ public class Cube extends Shape
             dpdv = new Vector3(0.0f, 1.0f, 0.0f);
 		}
 		
-        return new SurfaceGeometry(it, n, u, v, dpdu, dpdv, this);
+        return new SurfaceGeometry(n, u, v, dpdu, dpdv, this);
     }
-    
     public Intersection getIntersection(Ray3 rw)
     {
         Ray3 ro = super.toObjectSpace(rw);
@@ -91,16 +89,15 @@ public class Cube extends Shape
         {
             if (LightRay.isValid(tmin))
             {
-                return new Intersection(rw, ro, tmin, this);
+                return new Intersection(ro, tmin, this);
             }
             else if (LightRay.isValid(tmax))
             {
-                return new Intersection(rw, ro, tmax, this);
+                return new Intersection(ro, tmax, this);
             }
         }
         return null;
     }
-    
     public Box3 getBoundingBox()
     {
         Point3 pmin = new Point3(-radius, -radius, -radius);
@@ -108,7 +105,6 @@ public class Cube extends Shape
         Box3 r = new Box3(pmin, pmax);
         return super.toWorldSpace(r);
     }
-	
 	public Point3 sampleSurface(float u1, float u2)
 	{
 		Random random = ThreadLocalRandom.current();
@@ -132,5 +128,9 @@ public class Cube extends Shape
 		}
 		return toWorldSpace(r);
 	}
-    
+	
+	public Material getMaterial()
+	{
+		return material;
+	}
 }

@@ -32,7 +32,6 @@ public class RGBColor
         B = DMath.clamp(B);
     }
     
-    
     public void addBy(RGBColor c)
     {
         R += c.R;

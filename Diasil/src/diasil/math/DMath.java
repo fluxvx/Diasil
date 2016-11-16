@@ -14,32 +14,26 @@ public class DMath
     
     private DMath() {}
 	
-	
-	
-	
 	public static float sqrt(float v)
 	{
 		return (float)Math.sqrt(v);
 	}
 	
-    
-    
     public static float acos(float cos_theta)
     {
         return (float)(Math.acos(cos_theta));
     }
-    
-    
-    public static float log10(float v)
+	
+	public static float log10(float v)
     {
         return (float)(Math.log10(v));
     }
-    
+	
     public static float log(float v)
     {
         return (float)(Math.log(v));
     }
-    
+	
     public static float pow(float a, float b)
     {
         return (float)(Math.pow(a, b));

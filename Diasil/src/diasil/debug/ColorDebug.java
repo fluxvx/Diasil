@@ -3,14 +3,14 @@ package diasil.debug;
 import diasil.ImageManager;
 import diasil.color.RGBColor;
 import diasil.color.RGBImage;
-import diasil.color.SPD;
+import diasil.color.SpectralDistribution;
 import diasil.color.SimpleFilm;
 import diasil.color.XYZColor;
 import diasil.color.XYZtoRGB;
 
 public class ColorDebug
 {
-	public static void showSPD(SPD s)
+	public static void showSPD(SpectralDistribution s)
 	{
 		int n_samples = 5000;
 		XYZColor xyz = new XYZColor(0.0f);

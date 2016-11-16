@@ -14,7 +14,11 @@ public class ToneMapMaximumToWhite extends ToneMapper
         {
             for (int j=0; j<img.height(); ++j)
             {
-                max = Math.max(max, img.X[i][j].Y);
+				float y = img.X[i][j].Y;
+				if (!Float.isNaN(y) && !Float.isInfinite(y))
+				{
+					max = Math.max(max, y);
+				}
             }
         }
         float scale = display_luminance/max;

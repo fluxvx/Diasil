@@ -5,8 +5,8 @@ import diasil.color.RGBImage;
 import diasil.color.RawFilm;
 import diasil.color.RawSample;
 import diasil.gui.ImagePanel;
-import diasil.sample.Sample;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -152,19 +152,46 @@ public class ImageManager
     }
 	
 	
+	public static BufferedImage toBufferedImage(RGBImage img)
+	{
+		BufferedImage image = new BufferedImage(img.width(), img.height(), BufferedImage.TYPE_INT_RGB);
+        for (int i=0; i<img.width(); ++i)
+        {
+            for (int j=0; j<img.height(); ++j)
+            {
+                RGBColor cc = new RGBColor(img.X[i][j]);
+                cc.clamp();
+                
+                int r = (int)(cc.R*255);
+                int g = (int)(cc.G*255);
+                int b = (int)(cc.B*255);
+                
+                Color color = new Color(r, g, b);
+                image.setRGB(i, j, color.getRGB());
+            }
+        }
+		return image;
+	}
+	
 	
 	public static void show(RGBImage render)
+	{
+		show(toBufferedImage(render));
+	}
+	
+	public static void show(BufferedImage img)
 	{
 		JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         ImagePanel image_panel = new ImagePanel();
-        image_panel.setImage(render);
+        image_panel.setImage(img);
         frame.setLayout(new BorderLayout());
         frame.add(image_panel, BorderLayout.CENTER);
         
-        frame.setSize(render.width()+100, render.height()+100);
+        frame.setSize(img.getWidth()+100, img.getHeight()+100);
 		frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 	}
+	
 }

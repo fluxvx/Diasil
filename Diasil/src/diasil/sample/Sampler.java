@@ -1,61 +1,26 @@
 package diasil.sample;
 
-import diasil.math.DMath;
 import java.util.SplittableRandom;
 
 public abstract class Sampler
 {
     protected static final float WAVELENGTH_MIN = 390.0f, WAVELENGTH_MAX = 700.0f;
-	protected SplittableRandom random;
+	public SplittableRandom random;
 	
 	public Sampler(SplittableRandom random)
 	{
 		this.random = random;
 	}
 	
-	protected float nextFloat()
+	public float nextFloat()
 	{
-		return (float)(random.nextDouble());
+		return (float)(random.nextDouble(0.9999999));
 	}
 	
 	public abstract void allocateSamples(SampleCollector sg);
 	public abstract Sample[] regenerateSamples(int img_i, int img_j, int img_width, int img_height);
 	public abstract int roundSize(int n);
-	public abstract Sampler clone();
-
-	/*public Sample[] generateSamples(int img_i, int img_j)
-    {
-        Point2[] pixel_samples = sample_pattern.getSamples2D(n_samples);
-		Point2[] lens_samples = sample_pattern.getSamples2D(n_samples);
-        float[] wavelength_samples = sample_pattern.getSamples1D(n_samples);
-		Utility.shuffle(lens_samples);
-        Utility.shuffle(wavelength_samples);
-        Sample[] samples = new Sample[pixel_samples.length];
-		float filter_weight_sum = 0.0f;
-        for (int i=0; i<samples.length; ++i)
-        {
-            Point2 offset = pixel_samples[i];
-            float x = img_i + 0.5f + offset.X;
-            float y = img_j + 0.5f + offset.Y;
-			float u = 2.0f*lens_samples[i].X - 1.0f;
-			float v = 2.0f*lens_samples[i].Y - 1.0f;
-            float wavelength = DMath.interpolate(WAVELENGTH_MIN, WAVELENGTH_MAX, wavelength_samples[i]);
-            float filter_weight = filter.weight(offset);
-            samples[i] = new Sample(x, y, u, v, wavelength, filter_weight);
-			filter_weight_sum += filter_weight;
-        }
-		
-		// normalize filter weights
-		float inv_filter_weight_sum = 1.0f/filter_weight_sum;
-		for (int i=0; i<samples.length; ++i)
-		{
-			samples[i].filter_weight *= inv_filter_weight_sum;
-		}
-		
-        return samples;
-    }*/
-	
-	
+	public abstract Sampler clone();	
 	
 	// [0,w]x[0,h] -> [-1,1]x[-1,1]
 	public void rasterToScreen(Sample s, int w, int h)

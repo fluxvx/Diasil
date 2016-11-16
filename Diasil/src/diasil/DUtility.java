@@ -1,9 +1,6 @@
 package diasil;
 
-import diasil.math.DMath;
-import diasil.math.geometry2.Point2;
 import java.util.List;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,9 +37,7 @@ public class DUtility
 		Date date = new Date();
 		return date_format_file_name.format(date);
 	}
-		
 	
-
 	private static DecimalFormat df = new DecimalFormat("#.##");
 	public static String getReadableTime(long m)
     {

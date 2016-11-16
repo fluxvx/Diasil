@@ -1,41 +1,35 @@
 package diasil.material;
 
-import diasil.color.SPD;
+import diasil.color.SpectralDistribution;
 import diasil.math.geometry3.Vector3;
 
-public class SpecularTransmission extends ReflectionModel
+public class SpecularTransmission extends BSDF
 {
-	private SPD color;
-	private float eta_i, eta_t;
-	private FresnelDialectric fresnel;
-	public SpecularTransmission(SPD color, float eta_i, float eta_t)
+	private SpectralDistribution color;
+	private SpectralDistribution eta_i, eta_t;
+	private FresnelDielectric fresnel;
+	public SpecularTransmission(SpectralDistribution color, SpectralDistribution eta_i, SpectralDistribution eta_t)
 	{
+		super(TRANSMISSION | SPECULAR);
 		this.color = color;
 		this.eta_i = eta_i;
 		this.eta_t = eta_t;
-		fresnel = new FresnelDialectric(eta_i, eta_t);
+		fresnel = new FresnelDielectric(eta_i, eta_t);
 	}
-	public boolean isDelta()
-	{
-		return true;
-	}
-	public float evaluate(Vector3 wo, Vector3 wi, float wavelength)
+	public float f(Vector3 wo, Vector3 wi, float wavelength)
 	{
 		return 0.0f;
 	}
-	public BSDFSample sample(BSDFSample wo, float u, float v)
+	public BSDFSample samplef(Vector3 wo, float u, float v, float wavelength)
 	{
-		float ei, et;
+		float ei = eta_i.evaluate(wavelength);
+		float et = eta_t.evaluate(wavelength);
 		boolean entering = CosTheta(wo) > 0.0f;
-		if (entering)
+		if (!entering)
 		{
-			ei = eta_i;
-			et = eta_t;
-		}
-		else
-		{
-			ei = eta_t;
-			et = eta_i;
+			float t = ei;
+			ei = et;
+			et = t;
 		}
 		float sini2 = SinTheta2(wo);
 		float eta = ei/et;
@@ -46,9 +40,9 @@ public class SpecularTransmission extends ReflectionModel
 		float sint_over_sini = eta;
 		Vector3 wi = new Vector3(sint_over_sini*-wo.X, sint_over_sini*-wo.Y, cost);
 		float pdf = 1.0f;
-		float f = fresnel.evaluate(CosTheta(wo));
-		float c = color.evaluate(wo.wavelength);
-		float reflectance = (et*et)/(ei*ei)*(1.0f-f)*c/AbsCosTheta(wi);
-		return new BSDFSample(wi, wo.wavelength, reflectance, pdf);		
+		float f = fresnel.evaluate(CosTheta(wo), wavelength);
+		float c = color.evaluate(wavelength);
+		float reflectance = (1.0f-f)*c/AbsCosTheta(wi);
+		return new BSDFSample(wi, reflectance, pdf);		
 	}
 }

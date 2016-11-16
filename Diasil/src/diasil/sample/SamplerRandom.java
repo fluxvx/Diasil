@@ -27,7 +27,7 @@ public class SamplerRandom extends Sampler
 		nSamples2D = sc.getSamples2D();
 		for (int i=0; i<nSamples2D.length; ++i)
 		{
-			n2D += 2*nSamples2D[i];
+			n2D += nSamples2D[i];
 		}
 		
 		for (int i=0; i<samples.length; ++i)
@@ -52,7 +52,7 @@ public class SamplerRandom extends Sampler
 			{
 				s.samples1D[j] = nextFloat();
 			}
-			for (int j=0; j<s.samples2D.length; ++i)
+			for (int j=0; j<s.samples2D.length; ++j)
 			{
 				s.samples2D[j] = nextFloat();
 			}

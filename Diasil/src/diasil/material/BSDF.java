@@ -3,27 +3,41 @@ package diasil.material;
 import diasil.math.DMath;
 import diasil.math.geometry3.Vector3;
 import diasil.sample.Sample;
-import diasil.sample.Sampler;
 
-public abstract class ReflectionModel
+public abstract class BSDF
 {
-	public abstract boolean isDelta();
-	public abstract float evaluate(Vector3 wo, Vector3 wi, float wavelength);
-	public BSDFSample sample(Vector3 wo, float u, float v, float wavelength)
+	public static final int REFLECTION   = 1 << 0,
+							TRANSMISSION = 1 << 1,
+							DIFFUSE      = 1 << 2,
+							GLOSSY       = 1 << 3,
+							SPECULAR     = 1 << 4,
+							ALL_TYPES = DIFFUSE | GLOSSY | SPECULAR,
+							ALL_REFLECTION = ALL_TYPES | REFLECTION,
+							ALL_TRANSMISSION = ALL_TYPES | TRANSMISSION,
+							ALL = ALL_REFLECTION | ALL_TRANSMISSION;
+	
+	public int type;
+	public BSDF(int type)
+	{
+		this.type = type;
+	}
+	public boolean matchesFlags(int flags)
+	{
+		return (type & flags) == type;
+	}
+	
+	public abstract float f(Vector3 wo, Vector3 wi, float wavelength);
+	public BSDFSample samplef(Vector3 wo, float u, float v, float wavelength)
 	{
 		Vector3 wi = Sample.CosineSampleHemisphere(u, v);
 		if (wo.Z < 0.0f) wi.Z = -wi.Z;
 		float pdf = pdf(wo, wi);
-		return new BSDFSample(wi, wavelength, evaluate(wo, wi, wavelength), pdf);
+		return new BSDFSample(wi, f(wo, wi, wavelength), pdf);
 	}
 	public float pdf(Vector3 wo, Vector3 wi)
 	{
 		return SameHemisphere(wo, wi)? AbsCosTheta(wi)*DMath.IPI: 0.0f;
 	}
-	
-	
-	
-	
 	
 	// fresnel reflectance for dielectric materials and circularly polarized light
 	public static float FresnelDielectric(float cosi, float cost, float etai, float etat)

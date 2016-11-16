@@ -6,23 +6,24 @@ import diasil.math.geometry3.Vector3;
 
 public class Intersection
 {
-	public Vector3 Wo;
-    public Point3 P, Pobject;
+    public Point3 Pobj;
     public float T;
-    public Shape E;
-    
-    public Intersection(Ray3 rw, Ray3 ro, float t, Shape e)
+    public Intersectable E;
+	public Intersection(Point3 pobj, float t, Intersectable e)
+	{
+		Pobj = pobj;
+		T = t;
+		E = e;
+	}
+    public Intersection(Ray3 ro, float t, Intersectable e)
     {
-		Wo = new Vector3(rw.D);
-		Wo.negate();
-        P = rw.pointAt(t);
-        Pobject = ro.pointAt(t);
+        Pobj = ro.pointAt(t);
         T = t;
 		E = e;
     }
 	
 	public SurfaceGeometry getSurfaceGeometry()
 	{
-		return E.getSurfaceGeometry(this);
+		return E.getSurfaceGeometry(Pobj);
 	}
 }

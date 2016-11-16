@@ -50,7 +50,7 @@ public class RenderPool
         ExecutorService render_pool = Executors.newFixedThreadPool(n_threads);
 		
 		SampleCollector sc = new SampleCollector();
-		renderer.collectSampleCounts(sc);
+		renderer.prepareForRendering(sc);
 		Sampler[] samplers = new Sampler[n_threads];
         for (int i=0; i<n_threads; ++i)
         {
@@ -88,7 +88,6 @@ public class RenderPool
 			long elapsed_time = System.currentTimeMillis() - render_start_milli;
             float average_time = ((float)(elapsed_time))/(n_pixels_completed+1);
 			long remaining_time = (long)(average_time*n_pixels_remaining);
-            
 
             DecimalFormat df = new DecimalFormat("#.##");
             String pc_s = df.format(pc)+"%";

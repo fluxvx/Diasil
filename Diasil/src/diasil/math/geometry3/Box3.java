@@ -54,30 +54,11 @@ public class Box3
         return null;
     }
     
-    
-    public boolean testIntersection(Ray3 r)
-    {
-        return getIntersection(r) != null;
-    }
-    
     public boolean contains(Point3 p)
     {
         return p.X > Pmin.X && p.X < Pmax.X
                 && p.Y > Pmin.Y && p.Y < Pmax.Y
-                && p.Z > Pmin.Z && p.Y < Pmax.Y;
-    }
-    
-    public Box3 union(Point3 p)
-    {
-        Box3 r = new Box3(this);
-        r.unionWith(p);
-        return r;
-    }
-    public Box3 union(Box3 p)
-    {
-        Box3 r = new Box3(this);
-        r.unionWith(p);
-        return r;
+                && p.Z > Pmin.Z && p.Z < Pmax.Z;
     }
     
     public void unionWith(Point3 p)
@@ -120,7 +101,7 @@ public class Box3
         unionWith(b.Pmax);
     }
 
-    public int dominantDimension()
+    public int longestDimension()
     {
         Vector3 d = new Vector3(Pmin, Pmax);
         if (d.X > d.Y)
@@ -143,28 +124,6 @@ public class Box3
         Vector3 d = new Vector3(Pmin, Pmax);
         return 2.0f*(d.X*d.Y + d.X*d.Z + d.Y*d.Z);
     }
-	
-	public Box3[] splitX(float a)
-	{
-		Box3 left = clone();
-		Box3 right = clone();
-		left.Pmax.X = right.Pmin.X = a;
-		return new Box3[]{left, right};
-	}
-	public Box3[] splitY(float a)
-	{
-		Box3 left = clone();
-		Box3 right = clone();
-		left.Pmax.Y = right.Pmin.Y = a;
-		return new Box3[]{left, right};
-	}
-	public Box3[] splitZ(float a)
-	{
-		Box3 left = clone();
-		Box3 right = clone();
-		left.Pmax.Z = right.Pmin.Z = a;
-		return new Box3[]{left, right};
-	}
 	
 	public Box3 clone()
 	{

@@ -1,15 +1,15 @@
 package diasil.color;
 
-public abstract class SPD
+public interface SpectralDistribution
 {
-    public abstract float evaluate(float wavelength);
+    public float evaluate(float wavelength);
 	
 	
     
     
-    public static SPD constant(final float v)
+    public static SpectralDistribution constant(final float v)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float wavelength)
             {
@@ -19,9 +19,9 @@ public abstract class SPD
         };
     }
     
-    public static SPD linearCombination(final SPD[] spd, final float[] f)
+    public static SpectralDistribution linearCombination(final SpectralDistribution[] spd, final float[] f)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float w)
             {
@@ -37,9 +37,9 @@ public abstract class SPD
     }
     
     
-    public static SPD scale(final SPD spd, final float scale)
+    public static SpectralDistribution scale(final SpectralDistribution spd, final float scale)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float wavelength)
             {
@@ -49,9 +49,9 @@ public abstract class SPD
         };
     }
     
-    public static SPD getGaussianDistribution(final float min, final float a, final float b, final float wavelength)
+    public static SpectralDistribution getGaussianDistribution(final float min, final float a, final float b, final float wavelength)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float w)
             {
@@ -62,9 +62,9 @@ public abstract class SPD
         };
     }
     
-    public static SPD getGaussianDistribution2(final float a, final float wavelength)
+    public static SpectralDistribution getGaussianDistribution2(final float a, final float wavelength)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float w)
             {
@@ -78,9 +78,9 @@ public abstract class SPD
     
     
     
-    public static SPD getBlackbodyDistribution(final float t)
+    public static SpectralDistribution getBlackbodyDistribution(final float t)
     {
-        return new SPD()
+        return new SpectralDistribution()
         {
             public float evaluate(float wl)
             {
@@ -102,7 +102,7 @@ public abstract class SPD
     }
     
     
-    public static SPDTable getIlluminantA()
+    public static SDTable getIlluminantA()
     {
         float[] values = new float[] {0.930483f,
                                         1.128210f,
@@ -201,10 +201,10 @@ public abstract class SPD
                                         237.008000f,
                                         239.370000f,
                                         241.675000f};
-        return new SPDTable(300.0f, 780.0f, values);
+        return new SDTable(300.0f, 780.0f, values);
     }
     
-    public static SPDTable getD65()
+    public static SDTable getD65()
     {
         float[] values = new float[]{0.034100f,
                                     1.664300f,
@@ -313,7 +313,7 @@ public abstract class SPD
                                     57.440600f,
                                     58.876500f,
                                     60.312500f};
-        return new SPDTable(300.0f, 830.0f, values);
+        return new SDTable(300.0f, 830.0f, values);
     }
 }
 

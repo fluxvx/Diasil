@@ -1,32 +1,38 @@
 package diasil.material;
 
-import diasil.color.SPD;
+import diasil.color.SpectralDistribution;
 import diasil.math.geometry3.Vector3;
 
-public class SpecularReflection extends ReflectionModel
+public class SpecularReflection extends BSDF
 {
-	private SPD color;
-	private FresnelReflection fresnel;
-	public SpecularReflection(SPD color, FresnelReflection fresnel)
+	private SpectralDistribution R;
+	private FresnelEquation fresnel;
+	public SpecularReflection(SpectralDistribution color, FresnelEquation fresnel)
 	{
-		this.color = color;
+		super(REFLECTION | SPECULAR);
+		this.R = color;
 		this.fresnel = fresnel;
 	}
-	public boolean isDelta()
-	{
-		return true;
-	}
-	public float evaluate(Vector3 wo, Vector3 wi, float wavelength)
+	public float f(Vector3 wo, Vector3 wi, float wavelength)
 	{
 		return 0.0f;
 	}
-	public BSDFSample sample(BSDFSample wo, float u, float v)
+	public float pdf(Vector3 wo, Vector3 wi)
 	{
-		Vector3 wi = new Vector3(-wo.X, -wo.Y, wo.Z);
-		float wavelength = wo.wavelength;
-		float reflectance = fresnel.evaluate(CosTheta(wo))*color.evaluate(wo.wavelength)/AbsCosTheta(wi);
-		float pdf = 1.0f;
-		return new BSDFSample(wi, wavelength, reflectance, pdf);
+		return 0.0f;
 	}
-
+	public BSDFSample samplef(Vector3 wo, float u, float v, float wavelength)
+	{
+		Vector3 wi = new Vector3(-wo.X, -wo.Y, wo.Z);	
+		float f = fresnel.evaluate(CosTheta(wo), wavelength)*R.evaluate(wavelength)/AbsCosTheta(wi);
+		if (Float.isNaN(f) || Float.isInfinite(f))
+		{
+			f = 0.0f;
+			//System.out.println("SR1 "+wo.X+" "+wo.Y+" "+wo.Z);
+			//System.out.println("SR2 "+wo.X+" "+wo.Y+" "+wo.Z);
+			//System.out.println("SR3 "+fresnel.evaluate(CosTheta(wo), wavelength)+" "+R.evaluate(wavelength)+" "+AbsCosTheta(wi));
+		}
+		float pdf = 1.0f;
+		return new BSDFSample(wi, f, pdf);
+	}
 }

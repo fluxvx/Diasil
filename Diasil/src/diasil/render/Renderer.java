@@ -2,10 +2,11 @@ package diasil.render;
 
 import diasil.sample.Sample;
 import diasil.sample.SampleCollector;
+import diasil.sample.Sampler;
+import java.util.SplittableRandom;
 
-public interface Renderer
+public abstract class Renderer
 {
-	public void prepareForRendering();
-	public void collectSampleCounts(SampleCollector sc);
-	public void takeSample(Sample sample);
+	public abstract void prepareForRendering(SampleCollector sc);
+	public abstract void takeSample(Sample sample, Sampler sampler);
 }

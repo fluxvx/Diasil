@@ -1,14 +1,15 @@
 package diasil.light;
 
-import diasil.color.SPD;
+import diasil.color.SpectralDistribution;
+import diasil.math.geometry3.CoordinateSpace3;
 import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Vector3;
 
-public class PointLight extends Light
+public class PointLight extends CoordinateSpace3 implements Light
 {
 	public Point3 ow;
-	public SPD intensity;
-	public PointLight(SPD intensity)
+	public SpectralDistribution intensity;
+	public PointLight(SpectralDistribution intensity)
 	{
 		this.intensity = intensity;
 		ow = null;
@@ -18,12 +19,15 @@ public class PointLight extends Light
 		super.compileTransforms();
 		ow = super.toWorldSpace(new Point3(0.0f, 0.0f, 0.0f));
 	}
-	public LightSample evaluate(Point3 pw, float wavelength)
+	public LightSample sampleL(Point3 pw, float wavelength, float u, float v)
 	{
-		Vector3 v = new Vector3(pw, ow);
-		float d2 = v.lengthSquared();
+		Vector3 wi = new Vector3(pw, ow);
+		float d2 = wi.lengthSquared();
 		float d = (float)Math.sqrt(d2);
 		float r_int = intensity.evaluate(wavelength)/d2;
-		return new LightSample(pw, ow, r_int, v, d);
+		wi.X /= d;
+		wi.Y /= d;
+		wi.Z /= d;
+		return new LightSample(wi, r_int, d);
 	}
 }

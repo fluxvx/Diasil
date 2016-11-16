@@ -1,16 +1,16 @@
 package diasil.color;
 
-public class SPDTable extends SPD
+public class SDTable implements SpectralDistribution
 {
     public float min, max;
     public float[] values;
-    public SPDTable(float min, float max, float[] values)
+    public SDTable(float min, float max, float[] values)
     {
         this.min = min;
         this.max = max;
         this.values = values;
     }
-	public SPDTable(float min, float max, int n_samples, SPD spd)
+	public SDTable(float min, float max, int n_samples, SpectralDistribution spd)
 	{
 		this.min = min;
 		this.max = max;

@@ -19,6 +19,12 @@ public class Normal3
 		Y = n.Y;
 		Z = n.Z;
 	}
+	public Normal3(Vector3 v)
+	{
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
+	}
 	
 	public float dot(Vector3 v)
 	{
@@ -30,10 +36,21 @@ public class Normal3
 	}
     
 
+	public float lengthSquared()
+    {
+        return X*X + Y*Y + Z*Z;
+    }
+    public float length()
+    {
+        return (float)Math.sqrt(lengthSquared());
+    }
 	public void normalize()
-	{
-		
-	}
+    {
+        float il = 1.0f/length();
+        X *= il;
+        Y *= il;
+        Z *= il;
+    }
 	
 	public void negate()
 	{

@@ -1,23 +1,17 @@
 package diasil.intersect;
 
 import diasil.math.geometry3.Normal3;
-import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Transform3;
 import diasil.math.geometry3.Vector3;
 
 public class SurfaceGeometry
 {
-    public Point3 P;
-	public Vector3 R;
     public Normal3 N;
     public float U, V;
     public Vector3 dPdU, dPdV;
 	
-	public SurfaceGeometry(Intersection it, Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv, Transform3 trn)
-	{
-		P = it.P;
-		R = new Vector3(it.Wo);
-		
+	public SurfaceGeometry(Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv, Transform3 trn)
+	{	
 		N = trn.toWorldSpace(n);
 		U = u;
 		V = v;
@@ -25,6 +19,23 @@ public class SurfaceGeometry
 		dPdV = trn.toWorldSpace(dpdv);
 		
 		N.normalize();
+		dPdU.normalize();
+		dPdV.normalize();
+	}
+	public SurfaceGeometry(Normal3 n, float u, float v, Transform3 trn)
+	{
+		N = trn.toWorldSpace(n);
+		U = u;
+		V = v;
+		
+		Vector3[] t = N.formBasis();
+		dPdU = t[0];
+		dPdV = t[1];
+		
+		N.normalize();
+		dPdU.normalize();
+		dPdV.normalize();
+		
 	}
 	public Vector3 toLocalSpace(Vector3 v)
 	{
@@ -38,9 +49,4 @@ public class SurfaceGeometry
 							dPdU.Y*v.X + dPdV.Y*v.Y + N.Y*v.Z,
 							dPdU.Z*v.X + dPdV.Z*v.Y + N.Z*v.Z);
 	}
-	public static SurfaceGeometry toWorldSpace(Intersection it, Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv, Transform3 trn)
-	{
-		return new SurfaceGeometry(it, n, u, v, dpdu, dpdv, trn);
-	}
-
 }

@@ -31,4 +31,8 @@ public class Point3
     {
         return (float)Math.sqrt(distanceToSquared(t));
     }
+	public float get(int i)
+	{
+		return (i == 0)? X: (i == 1)? Y: Z;
+	}
 }

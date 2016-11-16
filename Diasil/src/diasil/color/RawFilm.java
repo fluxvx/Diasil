@@ -23,7 +23,7 @@ public class RawFilm implements Film
 	}
 	public void recordContribution(int i, int j, int k, Sample s)
 	{
-		X[i][j][k] = new RawSample(s.X, s.Y, s.wavelength, s.intensity);
+		X[i][j][k] = new RawSample(s.X, s.Y, s.wavelength, s.L);
 	}
 	
 	public XYZImage toXYZ()

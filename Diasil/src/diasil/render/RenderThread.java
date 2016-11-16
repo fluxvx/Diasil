@@ -47,7 +47,7 @@ public class RenderThread implements Runnable
 				Sample[] samples = sampler.regenerateSamples(i, j, film.width(), film.height());
 				for (int k=0; k<samples.length; ++k)
 				{
-					renderer.takeSample(samples[k]);
+					renderer.takeSample(samples[k], sampler);
 					film.recordContribution(i, j, k, samples[k]);
 				}
 				render_thread_pool.pixelCompleted();

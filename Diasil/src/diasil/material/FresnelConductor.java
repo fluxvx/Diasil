@@ -1,6 +1,8 @@
 package diasil.material;
 
-public class FresnelConductor implements FresnelReflection
+import diasil.color.SpectralDistribution;
+
+public class FresnelConductor implements FresnelEquation
 {
 	private float eta, k;
 	public FresnelConductor(float eta, float k)
@@ -8,8 +10,8 @@ public class FresnelConductor implements FresnelReflection
 		this.eta = eta;
 		this.k = k;
 	}
-	public float evaluate(float cosi)
+	public float evaluate(float cosi, float wavelength)
 	{
-		return ReflectionModel.FresnelConductive(Math.abs(cosi), eta, k);
+		return BSDF.FresnelConductive(Math.abs(cosi), eta, k);
 	}
 }

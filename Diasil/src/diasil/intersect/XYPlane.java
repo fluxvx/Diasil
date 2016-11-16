@@ -4,19 +4,21 @@ import diasil.Diasil;
 import diasil.material.LightRay;
 import diasil.material.Material;
 import diasil.math.geometry3.Box3;
+import diasil.math.geometry3.CoordinateSpace3;
 import diasil.math.geometry3.Normal3;
 import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Ray3;
 import diasil.math.geometry3.Vector3;
 
-public class XYPlane extends Shape
+public class XYPlane extends CoordinateSpace3 implements Intersectable
 {
 	private float width, height;
-	public XYPlane(float width, float height, Material m)
+	private Material material;
+	public XYPlane(float width, float height, Material material)
 	{
-		super(m);
 		this.width = width;
 		this.height = height;
+		this.material = material;
 	}
 	public Intersection getIntersection(Ray3 rw)
 	{
@@ -24,27 +26,26 @@ public class XYPlane extends Shape
 		float t = -ro.O.Z/ro.D.Z;
         if (LightRay.isValid(t))
         {
-			float px = ro.O.X + t*ro.D.X;
-			float py = ro.O.Y + t*ro.D.Y;
-			if (px > -width && px < width
-					&& py > -height && py < height)
+			Point3 po = ro.pointAt(t);
+			if (po.X > -width && po.X < width
+					&& po.Y > -height && po.Y < height)
 			{
-				return new Intersection(rw, ro, t, this);
+				return new Intersection(po, t, this);
 			}
         }
         return null;
 	}
 	
-	public SurfaceGeometry getSurfaceGeometry(Intersection it)
+	public SurfaceGeometry getSurfaceGeometry(Point3 p)
 	{
 		Normal3 n = new Normal3(0.0f, 0.0f, 1.0f);
-		float u = (width+it.Pobject.X)/(2*width);
-		float v = (height+it.Pobject.Y)/(2*height);
+		float u = (width+p.X)/(2*width);
+		float v = (height+p.Y)/(2*height);
 		Vector3 dpdu = new Vector3(1.0f, 0.0f, 0.0f);
 		Vector3 dpdv = new Vector3(0.0f, 1.0f, 0.0f);
 		Vector3 dndu = new Vector3(0.0f, 0.0f, 0.0f);
 		Vector3 dndv = new Vector3(0.0f, 0.0f, 0.0f);
-		return SurfaceGeometry.toWorldSpace(it, n, u, v, dpdu, dpdv, this);
+		return new SurfaceGeometry(n, u, v, dpdu, dpdv, this);
 	}
 	public Point3 sampleSurface(float u1, float u2)
 	{
@@ -57,5 +58,9 @@ public class XYPlane extends Shape
 	{
 		Box3 r = new Box3(new Point3(-width, -height, 0.0f), new Point3(width, height, 0.0f));
 		return toWorldSpace(r);
-	}	
+	}
+	public Material getMaterial()
+	{
+		return material;
+	}
 }

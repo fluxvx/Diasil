@@ -20,20 +20,25 @@ public class XYPlane extends CoordinateSpace3 implements Intersectable
 		this.height = height;
 		this.material = material;
 	}
-	public Intersection getIntersection(Ray3 rw)
+	public void closestIntersection(Ray3 rw, Intersection it)
 	{
 		Ray3 ro = toObjectSpace(rw);
 		float t = -ro.O.Z/ro.D.Z;
-        if (LightRay.isValid(t))
+        if (it.isValid(t))
         {
 			Point3 po = ro.pointAt(t);
 			if (po.X > -width && po.X < width
 					&& po.Y > -height && po.Y < height)
 			{
-				return new Intersection(po, t, this);
+				it.setValues(po, t, this);
 			}
         }
-        return null;
+	}
+	
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+		closestIntersection(rw, it);
+		return it.E == this;
 	}
 	
 	public SurfaceGeometry getSurfaceGeometry(Point3 p)

@@ -30,8 +30,9 @@ public class BooleanSamplerTracer
 				{
 					Sample s = samples[k];
 					Ray3 r = camera.generateRay(s);
-					Intersection it = scene.aggregate.getIntersection(r);
-					if (it != null)
+					Intersection it = new Intersection();
+					boolean blocked = scene.aggregate.isBlocked(r, it);
+					if (blocked)
 					{
 						v += 1.0f;
 					}

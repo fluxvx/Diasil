@@ -26,8 +26,9 @@ public class BooleanTracer
 				s.U = 0.0f;
 				s.V = 0.0f;
                 Ray3 r = camera.generateRay(s);
-                Intersection it = scene.aggregate.getIntersection(r);
-                if (it != null)
+				Intersection it = new Intersection();
+                boolean blocked = scene.aggregate.isBlocked(r, it);
+                if (blocked)
                 {
 					image.X[i][j] = new RGBColor(1.0f);
                 }

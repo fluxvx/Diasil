@@ -22,20 +22,34 @@ public class XZDisc extends CoordinateSpace3 implements Intersectable
         R2 = R*R;
 		this.material = material;
     }
-    public Intersection getIntersection(Ray3 rw)
+    public void closestIntersection(Ray3 rw, Intersection it)
     {
         Ray3 ro = toObjectSpace(rw);
         float t = (Y-ro.O.Y)/ro.D.Y;
-		if (LightRay.isValid(t))
+		if (it.isValid(t))
 		{
 			Point3 po = ro.pointAt(t);
 			if (po.distanceToSquared(new Point3(0.0f, Y, 0.0f)) < R2)
 			{
-				return new Intersection(po, t, this);
+				it.setValues(po, t, this);
 			}
 		}
-        return null;
     }
+	
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+        Ray3 ro = toObjectSpace(rw);
+        float t = (Y-ro.O.Y)/ro.D.Y;
+		if (it.isValid(t))
+		{
+			Point3 po = ro.pointAt(t);
+			if (po.distanceToSquared(new Point3(0.0f, Y, 0.0f)) < R2)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
     
     public SurfaceGeometry getSurfaceGeometry(Point3 p)
     {

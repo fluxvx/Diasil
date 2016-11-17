@@ -34,7 +34,7 @@ public class RenderPool
 		this.n_threads = n_threads;
 	}
 		
-    public void render(SimpleFilm film, Sampler sampler, Renderer renderer)
+    public void render(SimpleFilm film, Sampler sampler, Integrator renderer)
     {
 		render_start_milli = System.currentTimeMillis();
 		

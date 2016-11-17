@@ -17,32 +17,22 @@ public class Aggregate implements Intersectable
     {
         intersectables.add(e);
     }
-    public Intersection getIntersection(Ray3 rw)
+    public void closestIntersection(Ray3 rw, Intersection it)
     {	
-        Intersection r = null;
         for (int i=0; i<intersectables.size(); ++i)
         {
-            Intersectable e = intersectables.get(i);
-            Intersection t = e.getIntersection(rw);
-            if (r == null || (t != null && t.T < r.T))
-            {
-                r = t;
-            }
+			intersectables.get(i).closestIntersection(rw, it);
         }
-        return r;
     }
-	public boolean isBlocked(Ray3 rw, float d)
+	public boolean isBlocked(Ray3 rw, Intersection it)
 	{
-		d -= 1.0E-3f;
 		for (int i=0; i<intersectables.size(); ++i)
-		{
-			Intersectable e = intersectables.get(i);
-			Intersection t = e.getIntersection(rw);
-			if (t != null && t.T < d)
+        {
+			if (intersectables.get(i).isBlocked(rw, it))
 			{
 				return true;
 			}
-		}
+        }
 		return false;
 	}
     public SurfaceGeometry getSurfaceGeometry(Point3 p)

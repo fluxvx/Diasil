@@ -63,7 +63,7 @@ public class Cube extends CoordinateSpace3 implements Intersectable
 		
         return new SurfaceGeometry(n, u, v, dpdu, dpdv, this);
     }
-    public Intersection getIntersection(Ray3 rw)
+    public void closestIntersection(Ray3 rw, Intersection it)
     {
         Ray3 ro = super.toObjectSpace(rw);
         
@@ -87,17 +87,21 @@ public class Cube extends CoordinateSpace3 implements Intersectable
 
         if (tmax >= Math.max(0.0f, tmin))
         {
-            if (LightRay.isValid(tmin))
+            if (it.isValid(tmin))
             {
-                return new Intersection(ro, tmin, this);
+                it.setValues(ro.pointAt(tmin), tmin, this);
             }
-            else if (LightRay.isValid(tmax))
+            else if (it.isValid(tmax))
             {
-                return new Intersection(ro, tmax, this);
+                it.setValues(ro.pointAt(tmax), tmax, this);
             }
         }
-        return null;
     }
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+		closestIntersection(rw, it);
+		return it.E == this;
+	}
     public Box3 getBoundingBox()
     {
         Point3 pmin = new Point3(-radius, -radius, -radius);

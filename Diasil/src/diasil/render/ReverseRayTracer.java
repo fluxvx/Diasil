@@ -18,7 +18,7 @@ import diasil.sample.SampleCollector;
 import diasil.sample.Sampler;
 import java.util.SplittableRandom;
 
-public class ReverseRayTracer extends Renderer
+public class ReverseRayTracer extends Integrator
 {
 	private Scene scene;
 	private Camera camera;
@@ -41,9 +41,10 @@ public class ReverseRayTracer extends Renderer
     }
 	
 	public float traceRay(LightRay rw, Sample sample, Sampler sampler, int depth)
-	{	
-		Intersection it = scene.aggregate.getIntersection(rw);
-		if (it == null)
+	{
+		Intersection it = new Intersection();
+		scene.aggregate.closestIntersection(rw, it);
+		if (!it.success())
 		{
 			return 0.0f;
 		}
@@ -66,7 +67,9 @@ public class ReverseRayTracer extends Renderer
 			float ud2 = sampler.nextFloat();
 			LightSample light_sample = light.sampleL(p, rw.wavelength, ud1, ud2);
 			Ray3 light_test = new Ray3(p, light_sample.Wi);
-			if (!scene.aggregate.isBlocked(light_test, light_sample.distance))
+			Intersection it_lt = new Intersection();
+			it_lt.T = light_sample.distance - Intersection.MIN_T;
+			if (!scene.aggregate.isBlocked(light_test, it_lt))
 			{
 				float Li = light_sample.Li;
 				float dot = Math.abs(sg.N.dot(light_sample.Wi));

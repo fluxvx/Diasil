@@ -22,8 +22,4 @@ public class LightRay extends Ray3
         super(r);
         this.wavelength = wavelength;
     }
-    public static boolean isValid(float t)
-    {
-        return t > 1.0E-3f;
-    }
 }

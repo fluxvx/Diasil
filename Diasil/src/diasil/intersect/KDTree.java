@@ -4,6 +4,13 @@ import diasil.math.geometry3.Box3;
 import diasil.math.geometry3.Ray3;
 import java.util.ArrayList;
 
+
+
+// a simple KDTree implementation
+// judge whether an object goes to the left or right based on its center
+// left.bounds and right.bounds may overlap
+// the same element won't be found in different nodes
+
 public class KDTree extends Aggregate
 {
 	private KDTreeNode root;
@@ -114,101 +121,246 @@ public class KDTree extends Aggregate
 	}
 	
 	
-	public Intersection getIntersection(Ray3 rw)
+	public void closestIntersection(Ray3 rw, Intersection it)
     {
-		return getIntersection(rw, root);
-    }
-	
-	// possible optimization: pass an intersection as a parameter
-	// and check if it.T is less than the box's T, enabling you to skip checking an entire node
-	public Intersection getIntersection(Ray3 rw, KDTreeNode node)
-	{
-		if (node.bounds.getIntersection(rw) == null)
+		float[] nt = root.bounds.getIntersection(rw);
+		if (nt != null && (it.isValid(nt[0]) || it.isValid(nt[1])))
 		{
-			return null;
+			closestIntersection(rw, it, root);
 		}
-		
+	}
+	
+	// this was painful to write, I wanted to make sure each case was handled properly
+	// if I traversed it by splitting plane rather than checking boxes
+	// a few of these cases would be superfluous
+	public void closestIntersection(Ray3 rw, Intersection it, KDTreeNode node)
+	{
 		if (node.its == null)
 		{
-			Intersection left = getIntersection(rw, node.left);
-			Intersection right = getIntersection(rw, node.right);
-			if (left == null)
+			float[] lt = node.left.bounds.getIntersection(rw);
+			float[] rt = node.right.bounds.getIntersection(rw);
+			
+			if (lt == null)
 			{
-				if (right == null)
+				if (rt != null && (it.isValid(rt[0]) || it.isValid(rt[1])))
 				{
-					return null;
-				}
-				else
-				{
-					return right;
+					closestIntersection(rw, it, node.right);
 				}
 			}
 			else
 			{
-				if (right == null)
+				if (rt == null)
 				{
-					return left;
+					if (it.isValid(lt[0]) || it.isValid(lt[1]))
+					{
+						closestIntersection(rw, it, node.left);
+					}
 				}
 				else
 				{
-					if (left.T < right.T)
+					if (it.isValid(lt[0]))
 					{
-						return left;
+						if (it.isValid(rt[0]))
+						{
+							if (lt[0] < rt[0])
+							{
+								closestIntersection(rw, it, node.left);
+								if (it.isValid(rt[0])) // check again, as it.T may have been updated
+								{
+									closestIntersection(rw, it, node.right);
+								}
+							}
+							else
+							{
+								closestIntersection(rw, it, node.right);
+								if (it.isValid(lt[0]))
+								{
+									closestIntersection(rw, it, node.left);
+								}
+							}
+						}
+						else if (it.isValid(rt[1]))
+						{
+							if (lt[0] < rt[1])
+							{
+								closestIntersection(rw, it, node.left);
+								if (it.isValid(rt[1]))
+								{
+									closestIntersection(rw, it, node.right);
+								}
+							}
+							else
+							{
+								closestIntersection(rw, it, node.right);
+								if (it.isValid(lt[0]))
+								{
+									closestIntersection(rw, it, node.left);
+								}
+							}
+						}
+						else
+						{
+							closestIntersection(rw, it, node.left);
+						}
 					}
-					else
+					else if (it.isValid(lt[1]))
 					{
-						return right;
+						if (it.isValid(rt[0]))
+						{
+							if (lt[1] < rt[0])
+							{
+								closestIntersection(rw, it, node.left);
+								if (it.isValid(rt[0])) // check again, as it.T may have been updated
+								{
+									closestIntersection(rw, it, node.right);
+								}
+							}
+							else
+							{
+								closestIntersection(rw, it, node.right);
+								if (it.isValid(lt[1]))
+								{
+									closestIntersection(rw, it, node.left);
+								}
+							}
+						}
+						else if (it.isValid(rt[1]))
+						{
+							if (lt[1] < rt[1])
+							{
+								closestIntersection(rw, it, node.left);
+								if (it.isValid(rt[1]))
+								{
+									closestIntersection(rw, it, node.right);
+								}
+							}
+							else
+							{
+								closestIntersection(rw, it, node.right);
+								if (it.isValid(lt[1]))
+								{
+									closestIntersection(rw, it, node.left);
+								}
+							}
+						}
+						else
+						{
+							closestIntersection(rw, it, node.left);
+						}
+					}
+					else if (it.isValid(rt[0]) || it.isValid(rt[1]))
+					{
+						closestIntersection(rw, it, node.right);
 					}
 				}
 			}
 		}
 		else
 		{
-			Intersection r = null;
 			for (int i=0; i<node.its.size(); ++i)
 			{
 				Intersectable e = node.its.get(i);
-				Intersection t = e.getIntersection(rw);
-				if (r == null || (t != null && t.T < r.T))
-				{
-					r = t;
-				}
+				e.closestIntersection(rw, it);
 			}
-			return r;
 		}
 	}
 	
-	
-	public boolean isBlocked(Ray3 rw, float d)
+	public boolean isBlocked(Ray3 rw, Intersection it)
 	{
-		d -= 1.0E-3f;
-		return isBlocked(rw, d, root);
-	}
-	private boolean isBlocked(Ray3 rw, float d, KDTreeNode node)
-	{
-		float[] nt = node.bounds.getIntersection(rw);
-		if (nt == null || nt[0] > d)
+		float[] nt = root.bounds.getIntersection(rw);
+		if (nt != null && (it.isValid(nt[0]) || it.isValid(nt[1])))
 		{
+			return isBlocked(rw, it, root);
+		}
+		return false;
+	}
+	private boolean isBlocked(Ray3 rw, Intersection it, KDTreeNode node)
+	{
+		if (node.its == null)
+		{
+			float[] lt = node.left.bounds.getIntersection(rw);
+			float[] rt = node.right.bounds.getIntersection(rw);
+			
+			if (lt == null)
+			{
+				if (rt == null)
+				{
+					return false;
+				}
+				if (it.isValid(rt[0]) || it.isValid(rt[1]))
+				{
+					return isBlocked(rw, it, node.right);
+				}
+				return false;
+			}
+			
+			if (rt == null)
+			{
+				if (it.isValid(lt[0]) || it.isValid(lt[1]))
+				{
+					return isBlocked(rw, it, node.left);
+				}
+				return false;
+			}
+			
+			if (it.isValid(lt[0]))
+			{
+				if (it.isValid(rt[0]))
+				{
+					if (lt[0] < rt[0])
+					{
+						return isBlocked(rw, it, node.left) || isBlocked(rw, it, node.right);
+					}
+					return isBlocked(rw, it, node.right) || isBlocked(rw, it, node.left);
+				}
+				if (it.isValid(rt[1]))
+				{
+					if (lt[0] < rt[1])
+					{
+						return isBlocked(rw, it, node.left) || isBlocked(rw, it, node.right);
+					}
+					return isBlocked(rw, it, node.right) || isBlocked(rw, it, node.left);
+				}
+				return false;
+			}
+			
+			if (it.isValid(lt[1]))
+			{
+				if (it.isValid(rt[0]))
+				{
+					if (lt[0] < rt[0])
+					{
+						return isBlocked(rw, it, node.left) || isBlocked(rw, it, node.right);
+					}
+					return isBlocked(rw, it, node.right) || isBlocked(rw, it, node.left);
+				}
+				if (it.isValid(rt[1]))
+				{
+					if (lt[0] < rt[1])
+					{
+						return isBlocked(rw, it, node.left) || isBlocked(rw, it, node.right);
+					}
+					return isBlocked(rw, it, node.right) || isBlocked(rw, it, node.left);
+				}
+				return false;
+			}
+			
+			if (it.isValid(rt[0]) || it.isValid(rt[1]))
+			{
+				return isBlocked(rw, it, node.right);
+			}
+			
 			return false;
 		}
 		
-		if (node.its == null)
+		for (int i=0; i<node.its.size(); ++i)
 		{
-			return isBlocked(rw, d, node.left) || isBlocked(rw, d, node.right);
-		}
-		else
-		{
-			for (int i=0; i<node.its.size(); ++i)
+			if (node.its.get(i).isBlocked(rw, it))
 			{
-				Intersectable e = node.its.get(i);
-				Intersection t = e.getIntersection(rw);
-				if (t != null && t.T < d)
-				{
-					return true;
-				}
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 	
 	public String toString()

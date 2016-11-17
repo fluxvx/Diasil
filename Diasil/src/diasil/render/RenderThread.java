@@ -7,11 +7,11 @@ import diasil.sample.Sampler;
 public class RenderThread implements Runnable
 {
 	private RenderPool render_thread_pool;
-	private Renderer renderer;
+	private Integrator renderer;
     private Sampler sampler;
     private SimpleFilm film;
     private int index, period, block_size;
-    public RenderThread(int index, int period, int block_size, Sampler sampler, SimpleFilm film, Renderer renderer, RenderPool render_thread_pool)
+    public RenderThread(int index, int period, int block_size, Sampler sampler, SimpleFilm film, Integrator renderer, RenderPool render_thread_pool)
     {
         this.index = index;
         this.period = period;

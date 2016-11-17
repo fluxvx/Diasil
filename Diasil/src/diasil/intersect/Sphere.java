@@ -21,23 +21,40 @@ public class Sphere extends CoordinateSpace3 implements Intersectable
 		this.material = material;
     }
     
-    public Intersection getIntersection(Ray3 rw)
+    public void closestIntersection(Ray3 rw, Intersection it)
     {
 		Ray3 ro = super.toObjectSpace(rw);
         float a = ro.D.dot(ro.D);
         float b = 2.0f*(ro.O.X*ro.D.X + ro.O.Y*ro.D.Y + ro.O.Z*ro.D.Z);
         float c = ro.O.X*ro.O.X + ro.O.Y*ro.O.Y + ro.O.Z*ro.O.Z - radius*radius; 
         float[] t = DMath.quadratic(a, b, c);
-        if (t.length != 0 && LightRay.isValid(t[0]))
+        if (t.length != 0 && it.isValid(t[0]))
         {
-            return new Intersection(ro, t[0], this);
+            it.setValues(ro.pointAt(t[0]), t[0], this);
         }
-        if (t.length == 2 && LightRay.isValid(t[1]))
+		else if (t.length == 2 && it.isValid(t[1]))
         {
-            return new Intersection(ro, t[1], this);
+            it.setValues(ro.pointAt(t[1]), t[1], this);
         }
-        return null;
     }
+	
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+		Ray3 ro = super.toObjectSpace(rw);
+        float a = ro.D.dot(ro.D);
+        float b = 2.0f*(ro.O.X*ro.D.X + ro.O.Y*ro.D.Y + ro.O.Z*ro.D.Z);
+        float c = ro.O.X*ro.O.X + ro.O.Y*ro.O.Y + ro.O.Z*ro.O.Z - radius*radius; 
+        float[] t = DMath.quadratic(a, b, c);
+        if (t.length != 0 && it.isValid(t[0]))
+        {
+			return true;
+        }
+		else if (t.length == 2 && it.isValid(t[1]))
+        {
+			return true;
+        }
+		return false;
+	}
     
     public SurfaceGeometry getSurfaceGeometry(Point3 p)
     {

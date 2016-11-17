@@ -11,7 +11,7 @@ import diasil.math.geometry3.Vector3;
 public class Triangle implements Intersectable
 {
 	// TODO: UV mapping, store UV value with each vertex and interpolate
-	private Point3 v0, v1, v2;
+	public Point3 v0, v1, v2;
 	private TriangleMesh mesh;
 	public Triangle(Point3 v0, Point3 v1, Point3 v2, TriangleMesh mesh)
 	{
@@ -22,7 +22,7 @@ public class Triangle implements Intersectable
 	}
 	
 	// http://www.graphics.cornell.edu/pubs/1997/MT97.html
-	public Intersection getIntersection(Ray3 ro)
+	public void closestIntersection(Ray3 ro, Intersection it)
 	{
         Vector3 e1 = new Vector3(v0, v1);
         Vector3 e2 = new Vector3(v0, v2);
@@ -30,7 +30,7 @@ public class Triangle implements Intersectable
         float det = e1.dot(pv);
         if (Math.abs(det) < 1.0E-3f)
         {
-            return null;
+            return;
         }
         
         float inv_det = 1.0f/det;
@@ -38,23 +38,27 @@ public class Triangle implements Intersectable
         float u = tv.dot(pv)*inv_det;
         if (u < 0.0f || u > 1.0f)
         {
-            return null;
+            return;
         }
         
         Vector3 qv = tv.cross(e1);
         float v = ro.D.dot(qv)*inv_det;
         if (v < 0.0f || u + v > 1.0f)
         {
-            return null;
+            return;
         }
 		
         float t = e2.dot(qv)*inv_det;
-        if (LightRay.isValid(t))
+        if (it.isValid(t))
 		{
-			return new Intersection(ro, t, this);
+			it.setValues(ro.pointAt(t), t, this);
 		}
-        return null;
 		
+	}
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+		closestIntersection(rw, it);
+		return it.E == this;
 	}
 	public SurfaceGeometry getSurfaceGeometry(Point3 p)
 	{

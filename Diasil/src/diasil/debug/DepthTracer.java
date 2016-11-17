@@ -26,8 +26,9 @@ public class DepthTracer
 				s.U = 0.0f;
 				s.V = 0.0f;
                 Ray3 r = camera.generateRay(s);
-                Intersection it = scene.aggregate.getIntersection(r);
-                if (it != null)
+				Intersection it = new Intersection();
+                scene.aggregate.closestIntersection(r, it);
+                if (it.success())
                 {
                     min_t = Math.min(min_t, it.T);
                     max_t = Math.max(max_t, it.T);

@@ -19,7 +19,6 @@ public class AreaLight extends CoordinateSpace3 implements Light
 	{
 		Point3 pl = it.sampleSurface(u, v);
 		
-		
 		Vector3 wi = new Vector3(pw, pl);
 		float d2 = wi.lengthSquared();
 		

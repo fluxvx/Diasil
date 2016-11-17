@@ -99,9 +99,14 @@ public class Hypercube extends CoordinateSpace3 implements Intersectable
 		kdtree.buildTree();
 	}
 	
-	public Intersection getIntersection(Ray3 ray)
+	public void closestIntersection(Ray3 ray, Intersection it)
 	{
-		return kdtree.getIntersection(ray);
+		kdtree.closestIntersection(ray, it);
+	}
+	
+	public boolean isBlocked(Ray3 ray, Intersection it)
+	{
+		return kdtree.isBlocked(ray, it);
 	}
 	
 	public SurfaceGeometry getSurfaceGeometry(Point3 p)

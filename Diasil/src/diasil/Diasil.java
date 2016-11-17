@@ -18,6 +18,7 @@ import diasil.intersect.Cylinder;
 import diasil.intersect.Hypercube;
 import diasil.intersect.KDTree;
 import diasil.intersect.Sphere;
+import diasil.intersect.SphericalSubdivisionTriangleMesh;
 import diasil.intersect.TriangleMesh;
 import diasil.intersect.XYPlane;
 import diasil.intersect.XZDisc;
@@ -37,10 +38,10 @@ import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.RotateXZ;
 import diasil.math.geometry3.RotateYZ;
 import diasil.math.geometry3.Scale3;
-import diasil.math.geometry3.SphericalToRectangular;
+import diasil.math.geometry3.SphericalFunction;
 import diasil.math.geometry3.Translate3;
 import diasil.render.RenderPool;
-import diasil.render.Renderer;
+import diasil.render.Integrator;
 import diasil.render.ReverseRayTracer;
 import diasil.sample.FilterGaussian;
 import diasil.sample.SampleCollector;
@@ -67,6 +68,7 @@ public class Diasil
 		SpectralDistribution blue = SpectralDistribution.getGaussianDistribution(0.1f, 1.0f, 1E-3f, 475.0f);
 		
 		Material lambertian_white = new DiffuseMaterial(white, 0.0f);
+		Material glass = new GlassMaterial(white, white, SpectralDistribution.constant(1.3f));
 		
 		float br = 20.0f;
 		float brs = br+0.01f;
@@ -112,7 +114,7 @@ public class Diasil
 		scene.add(box);*/
 		
 		
-		/*Function3 f = new Function3()
+		Function3 f = new Function3()
 		{
 			public float Z(float x, float y)
 			{
@@ -123,29 +125,49 @@ public class Diasil
 				return r*12;
 			}
 		};
-		SampleRange rx = new SampleRange(0, DMath.PI, 200, false);
-		SampleRange ry = new SampleRange(0, DMath.PI2, 200, false);
-		TriangleMesh mesh = new TriangleMesh(f, rx, ry, new SphericalToRectangular(), new GlassMaterial(white, white, SpectralDistribution.constant(1.3f)));
+		
+		
+		SphericalFunction sf = new SphericalFunction()
+		{
+			public float r(float theta, float phi)
+			{
+				return 15*DMath.cos(2*theta)*DMath.cos(2*phi);
+			}	
+		};
+		SphericalSubdivisionTriangleMesh mesh = new SphericalSubdivisionTriangleMesh(sf, 1, 1, glass);
 		mesh.rotateXZ(DMath.PI/4);
 		mesh.rotateYZ(DMath.PI/4);
+		mesh.translate(0, -5, 0);
+		//scene.add(mesh);
+		
+		//SphericalFunction.report();
+		
+		//SampleRange rx = new SampleRange(0, DMath.PI, 200, false);
+		//SampleRange ry = new SampleRange(0, DMath.PI2, 200, false);
+		
+		//TriangleMesh mesh = new TriangleMesh(f, rx, ry, new SphericalToRectangular(), );
+
 		//mesh.translate(0, -5, 0);
-		scene.add(mesh);*/
+		//scene.add(mesh);
 		
-		Hypercube hypercube = new Hypercube(6, 6.0f, 0.3f, new GlassMaterial(white, white, SpectralDistribution.constant(1.3f)));
-		scene.add(hypercube);
+		//Hypercube hypercube = new Hypercube(6, 6.0f, 0.3f, new GlassMaterial(white, white, SpectralDistribution.constant(1.3f)));
+		//scene.add(hypercube);
 		
-		/*Random rt = new Random(1000);
-		Aggregate aggr = new KDTree(30, 10);
-		for (int i=0; i<50; ++i)
+		Random rt = new Random(1000);
+		//Aggregate aggr = new Aggregate();
+		KDTree aggr = new KDTree(10, 10);
+		for (int i=0; i<10000; ++i)
 		{
-			Sphere s = new Sphere(1.0f, lambertian_white);
+			Sphere s = new Sphere(0.2f, lambertian_white);
 			float x = (2*rt.nextFloat()-1)*10;
 			float y = (2*rt.nextFloat()-1)*10;
 			float z = (2*rt.nextFloat()-1)*10;
 			s.translate(x,y,z);
+			s.compileTransforms();
 			aggr.add(s);
 		}
-		scene.add(aggr);*/
+		aggr.buildTree();
+		scene.add(aggr);
 		
 		
 		SpectralDistribution light_color = SpectralDistribution.getBlackbodyDistribution(6500.0f);
@@ -161,16 +183,16 @@ public class Diasil
 		//light_block.translate(0.0f, br, 0.0f);
 		//scene.add(light_block);
 		
-		Camera camera = new PerspectiveCamera(0.0f, 2*br, DMath.PI/2.5f, 0.0f);
+		Camera camera = new PerspectiveCamera(0.0f, 2*br, DMath.PI/6f, 0.0f);
         camera.translate(0.0f, 0.0f, -2*br);
 		scene.add(camera);
 		
 		SplittableRandom random = new SplittableRandom(seed);
 		
-		int samples_per_pixel = 10*10;
+		int samples_per_pixel = 20*20;
 		Sampler sampler = new SamplerStratified(samples_per_pixel, 1.0f, new FilterGaussian(0.5f, 1.0f), random);
 		SimpleFilm film = new SimpleFilm(600, 600);
-		Renderer renderer = new ReverseRayTracer(scene);
+		Integrator renderer = new ReverseRayTracer(scene);
 		
 		CoordinateSpace3.compileAll();
 		

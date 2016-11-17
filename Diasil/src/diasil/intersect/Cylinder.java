@@ -37,7 +37,7 @@ public class Cylinder extends CoordinateSpace3 implements Intersectable
 					(p0.Z+p1.Z)/2);
 	}
 	
-	public Intersection getIntersection(Ray3 rw)
+	public void closestIntersection(Ray3 rw, Intersection it)
 	{
 		Ray3 r = toObjectSpace(rw);
 		float a = r.D.X*r.D.X + r.D.Y*r.D.Y;
@@ -46,25 +46,28 @@ public class Cylinder extends CoordinateSpace3 implements Intersectable
 		float[] t = DMath.quadratic(a, b, c);
 		if (t.length > 0)
         {
-            if (LightRay.isValid(t[0]))
+            if (it.isValid(t[0]))
             {
 				Point3 po = r.pointAt(t[0]);
 				if (po.Z > -height/2 && po.Z < height/2)
 				{
-					return new Intersection(po, t[0], this);
+					it.setValues(po, t[0], this);
 				}
             }
-            
-            if (t.length == 2 && LightRay.isValid(t[1]))
+			else if (t.length == 2 && it.isValid(t[1]))
             {
 				Point3 po = r.pointAt(t[1]);
 				if (po.Z > -height/2 && po.Z < height/2)
 				{
-					return new Intersection(po, t[1], this);
+					it.setValues(po, t[1], this);
 				}
             }
         }
-		return null;
+	}
+	public boolean isBlocked(Ray3 rw, Intersection it)
+	{
+		closestIntersection(rw, it);
+		return it.E == this;
 	}
 	
 	public SurfaceGeometry getSurfaceGeometry(Point3 p)

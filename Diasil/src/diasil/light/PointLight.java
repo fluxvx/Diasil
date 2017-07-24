@@ -8,10 +8,10 @@ import diasil.math.geometry3.Vector3;
 public class PointLight extends CoordinateSpace3 implements Light
 {
 	public Point3 ow;
-	public SpectralDistribution intensity;
+	public SpectralDistribution power;
 	public PointLight(SpectralDistribution intensity)
 	{
-		this.intensity = intensity;
+		this.power = intensity;
 		ow = null;
 	}
 	public void compileTransforms()
@@ -24,10 +24,8 @@ public class PointLight extends CoordinateSpace3 implements Light
 		Vector3 wi = new Vector3(pw, ow);
 		float d2 = wi.lengthSquared();
 		float d = (float)Math.sqrt(d2);
-		float r_int = intensity.evaluate(wavelength)/d2;
-		wi.X /= d;
-		wi.Y /= d;
-		wi.Z /= d;
-		return new LightSample(wi, r_int, d);
+		wi.multiplyBy(1.0f/d);
+		float Li = power.evaluate(wavelength)/d2;
+		return new LightSample(wi, Li, d);
 	}
 }

@@ -21,6 +21,9 @@ public class HemisphereLight implements Light
 		float y = DMath.cos(phi);
 		float z = DMath.sin(phi)*DMath.cos(theta);
 		Vector3 wi = new Vector3(x, y, z);
+		float Li = power.evaluate(wavelength);
+		float d = Float.MAX_VALUE;
+		
 		return new LightSample(wi, power.evaluate(wavelength), Float.MAX_VALUE);
 	}
 

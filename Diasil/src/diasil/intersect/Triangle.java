@@ -1,6 +1,5 @@
 package diasil.intersect;
 
-import diasil.material.LightRay;
 import diasil.material.Material;
 import diasil.math.geometry3.Box3;
 import diasil.math.geometry3.Normal3;
@@ -66,7 +65,7 @@ public class Triangle implements Intersectable
         Vector3 e2 = new Vector3(v0, v2);
 		Vector3 n = e1.cross(e2);
 		Vector3 e3 = n.cross(e1);
-		return new SurfaceGeometry(new Normal3(n), 0, 0, e1, e3, mesh);
+		return new SurfaceGeometry(new Normal3(n), 0, 0, e1, e3);
 	}
 	public Point3 sampleSurface(float u1, float u2)
 	{

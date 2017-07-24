@@ -14,15 +14,15 @@ public abstract class Integrator
 	public abstract void takeSample(Sample sample, Sampler sampler);
 	
 	
-	/*public static float UniformSampleOneLight()
+	
+	
+	public float EstimateDirect(Light light)
 	{
-		// pick light, surface uv
-		// pick bsdf component sample, bsdf uv
-		// invoke estimatedirect
+		// sample light source
 		
+		// sample BSDF
+		
+		//LightSample ls = light.sampleL(pw, 0, 0, 0)
+		return 0.0f;
 	}
-	public static float EstimateDirect(Point3 p, Light light)
-	{
-		LightSample ls = light.sam
-	}*/
 }

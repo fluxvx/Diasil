@@ -3,6 +3,7 @@ package diasil;
 import diasil.camera.Camera;
 import diasil.intersect.Aggregate;
 import diasil.intersect.Intersectable;
+import diasil.light.AreaLight;
 import diasil.light.Light;
 import java.util.ArrayList;
 
@@ -33,6 +34,11 @@ public class Scene
 	public void add(Light light)
 	{
 		lights.add(light);
+	}
+	public void add(AreaLight area_light)
+	{
+		lights.add(area_light);
+		aggregate.add(area_light);
 	}
     public Camera getCurrentCamera()
     {

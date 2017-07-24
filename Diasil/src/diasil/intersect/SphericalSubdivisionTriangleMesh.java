@@ -5,13 +5,14 @@ import diasil.math.DMath;
 import diasil.math.geometry3.Point3;
 import diasil.math.geometry3.Ray3;
 import diasil.math.geometry3.SphericalFunction;
+import diasil.math.geometry3.Transform3;
 
 public class SphericalSubdivisionTriangleMesh extends TriangleMesh
 {
 	// http://www.opengl.org.ru/docs/pg/0208.html
-	public SphericalSubdivisionTriangleMesh(SphericalFunction sf, int n_subdivisions, int n_spheres, Material material)
+	public SphericalSubdivisionTriangleMesh(SphericalFunction sf, int n_subdivisions, int n_spheres, Material material, Transform3 transform)
 	{
-		super(3, 10, material);
+		super(3, 10, material, transform);
 		
 		float X = 0.525731112119133606f;
 		float Z = 0.850650808352039932f;
@@ -30,13 +31,15 @@ public class SphericalSubdivisionTriangleMesh extends TriangleMesh
 		Triangle[] ts = new Triangle[tids.length];
 		for (int i=0; i<ts.length; ++i)
 		{
-			float[] v0 = pts[tids[i][0]];
-			float[] v1 = pts[tids[i][1]];
-			float[] v2 = pts[tids[i][2]];
-			ts[i] = new Triangle(new Point3(v0[0], v0[1], v0[2]),
-								new Point3(v1[0], v1[1], v1[2]),
-								new Point3(v2[0], v2[1], v2[2]), this);
-			
+			float[] f0 = pts[tids[i][0]];
+			float[] f1 = pts[tids[i][1]];
+			float[] f2 = pts[tids[i][2]];
+			Point3 p0 = new Point3(f0[0], f0[1], f0[2]);
+			Point3 p1 = new Point3(f1[0], f1[1], f1[2]);
+			Point3 p2 = new Point3(f2[0], f2[1], f2[2]);
+			ts[i] = new Triangle(transform.toWorldSpace(p0),
+									transform.toObjectSpace(p1),
+									transform.toWorldSpace(p2), this);
 		}
 		
 		// TODO: create the triangle array of its final length
@@ -60,11 +63,10 @@ public class SphericalSubdivisionTriangleMesh extends TriangleMesh
 				t.v0 = adjust(t.v0, ns, sf);
 				t.v1 = adjust(t.v1, ns, sf);
 				t.v2 = adjust(t.v2, ns, sf);
-				kdtree.add(t);
+				super.add(t);
 			}
 		}
-		kdtree.buildTree();
-		
+		super.buildTree();
 	}
 	
 	private Point3 adjust(Point3 p, int n_sphere, SphericalFunction sf)

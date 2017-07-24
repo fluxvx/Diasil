@@ -4,6 +4,7 @@ import diasil.Scene;
 import diasil.camera.Camera;
 import diasil.intersect.Intersection;
 import diasil.intersect.SurfaceGeometry;
+import diasil.light.AreaLight;
 import diasil.light.Light;
 import diasil.light.LightSample;
 import diasil.material.BSDFSample;
@@ -18,12 +19,12 @@ import diasil.sample.SampleCollector;
 import diasil.sample.Sampler;
 import java.util.SplittableRandom;
 
-public class ReverseRayTracer extends Integrator
+public class WhittedRayTracer extends Integrator
 {
 	private Scene scene;
 	private Camera camera;
 	private int max_depth = 6;
-	public ReverseRayTracer(Scene scene)
+	public WhittedRayTracer(Scene scene)
 	{
 		this.scene = scene;
 	}
@@ -50,8 +51,15 @@ public class ReverseRayTracer extends Integrator
 		}
 		
 		Point3 p = rw.pointAt(it.T);
-		Vector3 wo = new Vector3(-rw.D.X, -rw.D.Y, -rw.D.Z);
 		
+		if (it.E instanceof AreaLight)
+		{
+			AreaLight light = (AreaLight)(it.E);
+			return light.power(p, rw.wavelength);
+		}
+		
+		
+		Vector3 wo = new Vector3(-rw.D.X, -rw.D.Y, -rw.D.Z);
 		SurfaceGeometry sg = it.getSurfaceGeometry();
 		if (sg.N.dot(rw.D) > 0)
 		{

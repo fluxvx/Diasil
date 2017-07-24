@@ -8,9 +8,9 @@ import diasil.math.geometry3.Transform3;
 
 public class SampledTriangleMesh extends TriangleMesh
 {
-	public SampledTriangleMesh(Function3 f, SampleRange rx, SampleRange ry, Transform3 transform, Material material)
+	public SampledTriangleMesh(Function3 f, SampleRange rx, SampleRange ry, Material material, Transform3 transform)
 	{
-		super(3, 10, material);
+		super(3, 10, material, transform);
 		Point3[] pts = new Point3[rx.N*ry.N];
 		float sx = (rx.wrap)? (rx.B-rx.A)/rx.N: (rx.B-rx.A)/(rx.N-1);
 		float sy = (ry.wrap)? (ry.B-ry.A)/ry.N: (ry.B-ry.A)/(ry.N-1);
@@ -53,10 +53,10 @@ public class SampledTriangleMesh extends TriangleMesh
 			Point3 v0 = pts[triangles[3*i]];
 			Point3 v1 = pts[triangles[3*i+1]];
 			Point3 v2 = pts[triangles[3*i+2]];
-            kdtree.add(new Triangle(v0, v1, v2, this));
+            super.add(new Triangle(v0, v1, v2, this));
         }
 		
-		kdtree.buildTree();
+		super.buildTree();
 	}
 
 }

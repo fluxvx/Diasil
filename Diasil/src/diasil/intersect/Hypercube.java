@@ -2,23 +2,19 @@ package diasil.intersect;
 
 import diasil.material.Material;
 import diasil.math.DMath;
-import diasil.math.geometry3.Box3;
-import diasil.math.geometry3.CoordinateSpace3;
 import diasil.math.geometry3.Point3;
-import diasil.math.geometry3.Ray3;
-import diasil.math.geometry3.Translate3;
+import diasil.math.geometry3.Transform3;
 import diasil.math.geometryN.PointN;
 import diasil.math.geometryN.RotateN;
 import java.util.Random;
 
-public class Hypercube extends CoordinateSpace3 implements Intersectable
+public class Hypercube extends KDTree
 {
-	private KDTree kdtree;
 	private PointN[] vertices;
 	private int[][] edges;
-	public Hypercube(int n, float r0, float r1, Material m)
+	public Hypercube(int n, float r0, float r1, Material m, Transform3 transform)
 	{
-		kdtree = new KDTree(3, 10);
+		super(3, 10);
 		vertices = new PointN[1 << n];
 		for (int i=0; i<vertices.length; ++i)
 		{
@@ -87,45 +83,17 @@ public class Hypercube extends CoordinateSpace3 implements Intersectable
 		{
 			Sphere s = new Sphere(r1, m);
 			s.translate(v[i].X, v[i].Y, v[i].Z);
+			s.transforms.add(transform);
 			s.compileTransforms();
-			kdtree.add(s);
+			super.add(s);
 		}
 		for (int i=0; i<edges.length; ++i)
 		{
 			Cylinder c = new Cylinder(r1, v[edges[i][0]], v[edges[i][1]], m);
+			c.transforms.add(transform);
 			c.compileTransforms();
-			kdtree.add(c);
+			super.add(c);
 		}
-		kdtree.buildTree();
-	}
-	
-	public void closestIntersection(Ray3 ray, Intersection it)
-	{
-		kdtree.closestIntersection(ray, it);
-	}
-	
-	public boolean isBlocked(Ray3 ray, Intersection it)
-	{
-		return kdtree.isBlocked(ray, it);
-	}
-	
-	public SurfaceGeometry getSurfaceGeometry(Point3 p)
-	{
-		return null;
-	}
-	
-	public Point3 sampleSurface(float u1, float u2)
-	{
-		return null;
-	}
-	
-	public Material getMaterial()
-	{
-		return null;
-	}
-	
-	public Box3 getBoundingBox()
-	{
-		return kdtree.getBoundingBox();
+		super.buildTree();
 	}
 }

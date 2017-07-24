@@ -1,5 +1,7 @@
 package diasil.math.geometry3;
 
+import diasil.math.DMath;
+
 public class Normal3
 {
 	public float X, Y, Z;
@@ -46,7 +48,7 @@ public class Normal3
     }
 	public void normalize()
     {
-        float il = 1.0f/length();
+        float il = DMath.invSqrt(lengthSquared());
         X *= il;
         Y *= il;
         Z *= il;

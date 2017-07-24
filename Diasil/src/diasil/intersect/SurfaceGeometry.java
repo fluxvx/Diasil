@@ -9,14 +9,30 @@ public class SurfaceGeometry
     public Normal3 N;
     public float U, V;
     public Vector3 dPdU, dPdV;
-	
-	public SurfaceGeometry(Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv, Transform3 trn)
-	{	
-		N = trn.toWorldSpace(n);
+
+
+	public SurfaceGeometry(Normal3 n, float u, float v)
+	{
+		N = n;
 		U = u;
 		V = v;
-		dPdU = trn.toWorldSpace(dpdu);
-		dPdV = trn.toWorldSpace(dpdv);
+		
+		Vector3[] t = N.formBasis();
+		dPdU = t[0];
+		dPdV = t[1];
+		
+		N.normalize();
+		dPdU.normalize();
+		dPdV.normalize();
+		
+	}
+	public SurfaceGeometry(Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv)
+	{	
+		N = n;
+		U = u;
+		V = v;
+		dPdU = dpdu;
+		dPdV = dpdv;
 		
 		N.normalize();
 		dPdU.normalize();
@@ -36,6 +52,18 @@ public class SurfaceGeometry
 		dPdU.normalize();
 		dPdV.normalize();
 		
+	}
+	public SurfaceGeometry(Normal3 n, float u, float v, Vector3 dpdu, Vector3 dpdv, Transform3 trn)
+	{	
+		N = trn.toWorldSpace(n);
+		U = u;
+		V = v;
+		dPdU = trn.toWorldSpace(dpdu);
+		dPdV = trn.toWorldSpace(dpdv);
+		
+		N.normalize();
+		dPdU.normalize();
+		dPdV.normalize();
 	}
 	public Vector3 toLocalSpace(Vector3 v)
 	{

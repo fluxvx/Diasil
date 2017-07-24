@@ -40,11 +40,12 @@ public class RenderThread implements Runnable
 	private void renderBlock(int x_start, int x_end, int y_start, int y_end)
 	{
 		//System.out.println(Thread.currentThread().getId()+" - rendering ["+x_start+","+y_start+"] to ["+x_end+","+y_end+"]");
+		int w = film.width(), h = film.height();
 		for (int i=x_start; i<x_end; ++i)
 		{
 			for (int j=y_start; j<y_end; ++j)
 			{
-				Sample[] samples = sampler.regenerateSamples(i, j, film.width(), film.height());
+				Sample[] samples = sampler.regenerateSamples(i, j, w, h);
 				for (int k=0; k<samples.length; ++k)
 				{
 					renderer.takeSample(samples[k], sampler);
